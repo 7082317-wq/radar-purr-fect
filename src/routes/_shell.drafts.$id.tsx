@@ -103,7 +103,7 @@ function DraftReport() {
           <span>{risk.date}</span>
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {risk.tags.map((t) => (
+          {risk.tags.map((t: string) => (
             <Badge key={t} variant="outline" className="border-mint/30 text-mint/90 bg-mint/5">#{t}</Badge>
           ))}
         </div>
