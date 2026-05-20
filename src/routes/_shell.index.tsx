@@ -98,11 +98,11 @@ function Dashboard() {
 }
 
 function DashboardContent() {
-  const { data: issues } = useSuspenseQuery(issuesQueryOptions());
+  const { issues, newIds, lastUpdated, isFetching, refetch } = useLiveIssues();
 
   const total = issues.length;
-  const highRisk = issues.filter((i) => (i.novelty_score ?? 0) >= 80 || (i.relevance_score ?? 0) >= 80).length;
-  const categories = new Set(issues.map((i) => i.category).filter(Boolean)).size;
+  const highRisk = issues.filter((i: Issue) => (i.novelty_score ?? 0) >= 80 || (i.relevance_score ?? 0) >= 80).length;
+  const categories = new Set(issues.map((i: Issue) => i.category).filter(Boolean)).size;
   const latest = issues[0]?.created_at
     ? new Date(issues[0].created_at).toLocaleDateString("ko-KR")
     : "—";
@@ -117,23 +117,39 @@ function DashboardContent() {
       </section>
 
       <section>
-        <div className="flex items-end justify-between mb-3">
+        <div className="flex items-end justify-between mb-3 gap-3 flex-wrap">
           <div>
             <h2 className="text-xl font-display font-semibold">신규 이슈 (Latest Issues)</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">최신순 · Supabase live</p>
+            <p className="text-xs text-muted-foreground mt-0.5">최신순 · Supabase live · 60초마다 자동 새로고침</p>
           </div>
-          <Button asChild variant="ghost" size="sm" className="text-mint hover:text-mint">
-            <Link to="/risks">
-              모두 보기 <ArrowRight className="ml-1 h-3.5 w-3.5" />
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="terminal text-[11px] text-muted-foreground flex items-center gap-1.5">
+              <span className={`h-1.5 w-1.5 rounded-full ${isFetching ? "bg-purple animate-pulse-glow" : "bg-mint"}`} />
+              Last updated · {lastUpdated.toLocaleTimeString("ko-KR", { hour12: false })}
+            </span>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="text-mint hover:text-mint gap-1.5"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+              새로고침
+            </Button>
+            <Button asChild variant="ghost" size="sm" className="text-mint hover:text-mint">
+              <Link to="/risks">
+                모두 보기 <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Link>
+            </Button>
+          </div>
         </div>
         {issues.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
             {issues.slice(0, 4).map((i: Issue) => (
-              <IssueCard key={i.id} issue={i} />
+              <IssueCard key={i.id} issue={i} isNew={newIds.has(i.id)} />
             ))}
           </div>
         )}
