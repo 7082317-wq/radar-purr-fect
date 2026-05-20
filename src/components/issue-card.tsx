@@ -23,13 +23,29 @@ function formatDate(iso: string) {
   }
 }
 
-export function IssueCard({ issue }: { issue: Issue }) {
+export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: boolean }) {
   const openSource = () => {
     if (issue.source_url) window.open(issue.source_url, "_blank", "noopener,noreferrer");
   };
 
+  const isHighNovelty = (issue.novelty_score ?? 0) >= 80;
+
   return (
-    <div className="glass rounded-2xl p-5 hover:border-mint/40 transition-all hover:-translate-y-0.5 flex flex-col gap-3">
+    <div
+      className={`glass rounded-2xl p-5 transition-all hover:-translate-y-0.5 flex flex-col gap-3 relative ${
+        isHighNovelty ? "border-danger/50 animate-high-glow" : "hover:border-mint/40"
+      } ${isNew ? "animate-new-issue ring-1 ring-mint/50" : ""}`}
+    >
+      {isNew && (
+        <span className="absolute -top-2 -right-2 terminal text-[10px] uppercase bg-mint text-mint-foreground px-2 py-0.5 rounded-full shadow-elegant animate-bounce-in">
+          NEW
+        </span>
+      )}
+      {isHighNovelty && (
+        <span className="absolute -top-2 left-4 terminal text-[10px] uppercase bg-danger text-white px-2 py-0.5 rounded-full">
+          HIGH NOVELTY
+        </span>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           {issue.category && (
