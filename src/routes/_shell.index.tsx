@@ -1,13 +1,12 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { RadarAnimation } from "@/components/radar-animation";
 import { IssueCard } from "@/components/issue-card";
 import { MonitoringFeed } from "@/components/monitoring-feed";
-import { issuesQueryOptions, type Issue } from "@/lib/issues";
+import { issuesQueryOptions, useLiveIssues, type Issue } from "@/lib/issues";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Activity, Sparkles, ShieldAlert, Database } from "lucide-react";
+import { ArrowRight, Activity, Sparkles, ShieldAlert, Database, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/_shell/")({
   loader: ({ context }) => {
