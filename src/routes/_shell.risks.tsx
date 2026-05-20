@@ -1,9 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { IssueCard } from "@/components/issue-card";
-import { issuesQueryOptions } from "@/lib/issues";
+import { issuesQueryOptions, useLiveIssues } from "@/lib/issues";
 import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/_shell/risks")({
   loader: ({ context }) => {
@@ -38,19 +38,37 @@ function RisksPage() {
 }
 
 function IssuesList() {
-  const { data: issues } = useSuspenseQuery(issuesQueryOptions());
-  if (issues.length === 0) {
-    return (
-      <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
-        아직 수집된 이슈가 없어요. 모니터링 잡이 실행되면 자동으로 표시됩니다.
-      </div>
-    );
-  }
+  const { issues, newIds, lastUpdated, isFetching, refetch } = useLiveIssues();
+
   return (
-    <div className="grid md:grid-cols-2 gap-4">
-      {issues.map((i) => (
-        <IssueCard key={i.id} issue={i} />
-      ))}
-    </div>
+    <>
+      <div className="flex items-center justify-between gap-3 flex-wrap glass rounded-xl px-4 py-2.5">
+        <span className="terminal text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <span className={`h-1.5 w-1.5 rounded-full ${isFetching ? "bg-purple animate-pulse-glow" : "bg-mint"}`} />
+          Last updated · {lastUpdated.toLocaleTimeString("ko-KR", { hour12: false })} · 60초마다 자동 새로고침
+        </span>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          className="text-mint hover:text-mint gap-1.5"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          새로고침
+        </Button>
+      </div>
+      {issues.length === 0 ? (
+        <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+          아직 수집된 이슈가 없어요. 모니터링 잡이 실행되면 자동으로 표시됩니다.
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+          {issues.map((i) => (
+            <IssueCard key={i.id} issue={i} isNew={newIds.has(i.id)} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
