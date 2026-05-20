@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { dpaUpdates } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/_shell/foreign-dpa")({
   component: () => (
@@ -10,19 +9,9 @@ export const Route = createFileRoute("/_shell/foreign-dpa")({
           ICO · EDPB · OPC · PDPC · CNIL · FTC 등 주요 감독기관의 최신 가이던스 및 결정.
         </p>
       </header>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {dpaUpdates.map((d) => (
-          <div key={d.id} className="glass rounded-2xl p-5 hover:border-purple/40 transition-all">
-            <div className="flex items-center justify-between">
-              <span className="terminal text-xs px-2 py-1 rounded-md bg-purple/15 text-purple border border-purple/30">
-                {d.agency}
-              </span>
-              <span className="text-xs text-muted-foreground">{d.country} · {d.date}</span>
-            </div>
-            <h3 className="mt-3 font-semibold leading-snug">{d.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{d.excerpt}</p>
-          </div>
-        ))}
+      <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+        이 섹션은 아직 데이터 소스에 연결되지 않았어요. <br />
+        전용 테이블을 추가하면 여기에 실시간으로 표시됩니다.
       </div>
     </div>
   ),
