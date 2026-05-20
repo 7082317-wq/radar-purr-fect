@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      issues: {
+        Row: {
+          capability_tags: string[] | null
+          category: string | null
+          created_at: string
+          id: string
+          novelty_score: number | null
+          privacy_implications: string | null
+          relevance_score: number | null
+          source: string | null
+          source_url: string | null
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          capability_tags?: string[] | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          novelty_score?: number | null
+          privacy_implications?: string | null
+          relevance_score?: number | null
+          source?: string | null
+          source_url?: string | null
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          capability_tags?: string[] | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          novelty_score?: number | null
+          privacy_implications?: string | null
+          relevance_score?: number | null
+          source?: string | null
+          source_url?: string | null
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
