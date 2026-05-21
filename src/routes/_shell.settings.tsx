@@ -1,14 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { setTestMode, useTestMode } from "@/lib/test-mode";
+import { FlaskConical } from "lucide-react";
 
 export const Route = createFileRoute("/_shell/settings")({
-  component: () => (
+  component: SettingsPage,
+});
+
+function SettingsPage() {
+  const testMode = useTestMode();
+  return (
     <div className="space-y-5 max-w-2xl">
       <header>
         <h1 className="text-3xl font-display font-bold">설정</h1>
         <p className="text-sm text-muted-foreground mt-1">모니터링 및 알림 환경설정.</p>
       </header>
+
+      <div className="glass rounded-2xl p-5 space-y-4 border-purple/30">
+        <div className="flex items-center gap-2">
+          <FlaskConical className="h-4 w-4 text-purple" />
+          <h2 className="font-semibold">테스트 모드</h2>
+        </div>
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <Label className="text-sm">샘플 데이터 표시</Label>
+            <p className="text-xs text-muted-foreground">
+              켜면 데모용 가상 이슈(`[샘플]` 접두사)가 대시보드/위험 목록에 표시됩니다.
+              실제 Supabase 데이터는 변경되지 않습니다.
+            </p>
+          </div>
+          <Switch
+            checked={testMode}
+            onCheckedChange={(v) => setTestMode(Boolean(v))}
+          />
+        </div>
+      </div>
 
       <div className="glass rounded-2xl p-5 space-y-4">
         <h2 className="font-semibold">스케줄</h2>
@@ -44,5 +71,5 @@ export const Route = createFileRoute("/_shell/settings")({
         ))}
       </div>
     </div>
-  ),
-});
+  );
+}
