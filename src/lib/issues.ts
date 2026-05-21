@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { SAMPLE_ISSUES, useTestMode } from "@/lib/test-mode";
 
 export type Issue = Tables<"issues">;
 
@@ -48,20 +49,29 @@ export function useLiveIssues() {
     refetchIntervalInBackground: false,
   });
 
+  // Inject sample data only when test mode is on.
+  const testMode = useTestMode();
+
+  const issues = useMemo<Issue[]>(() => {
+    if (!testMode) return query.data;
+    return [...query.data, ...SAMPLE_ISSUES].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }, [query.data, testMode, SAMPLE_ISSUES]);
+
   const seenRef = useRef<Set<string> | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
   const [lastUpdated, setLastUpdated] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    const data = query.data;
-    if (!data) return;
+    if (!issues) return;
     setLastUpdated(new Date());
-    const ids = new Set(data.map((i) => i.id));
+    const ids = new Set(issues.map((i) => i.id));
     if (seenRef.current === null) {
       seenRef.current = ids;
       return;
     }
-    const fresh = data.filter((i) => !seenRef.current!.has(i.id));
+    const fresh = issues.filter((i) => !seenRef.current!.has(i.id));
     if (fresh.length > 0) {
       const freshSet = new Set(fresh.map((i) => i.id));
       setNewIds(freshSet);
@@ -75,13 +85,14 @@ export function useLiveIssues() {
       return () => clearTimeout(t);
     }
     seenRef.current = ids;
-  }, [query.data]);
+  }, [issues]);
 
   return {
-    issues: query.data,
+    issues,
     newIds,
     lastUpdated,
     isFetching: query.isFetching,
     refetch: query.refetch,
+    testMode,
   };
 }
