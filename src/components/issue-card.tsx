@@ -23,6 +23,11 @@ function formatDate(iso: string) {
   }
 }
 
+function formatText(value: string | string[] | null | undefined) {
+  if (Array.isArray(value)) return value.join("\n");
+  return value ?? "";
+}
+
 export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: boolean }) {
   const openSource = () => {
     if (issue.source_url) window.open(issue.source_url, "_blank", "noopener,noreferrer");
@@ -79,7 +84,7 @@ export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: bool
             <ShieldAlert className="h-3 w-3" /> Privacy Implications
           </div>
           <p className="mt-1 text-xs text-foreground/85 leading-relaxed line-clamp-3">
-            {issue.privacy_implications}
+            {formatText(issue.privacy_implications)}
           </p>
         </div>
       )}

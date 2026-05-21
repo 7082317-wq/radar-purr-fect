@@ -125,7 +125,7 @@ function DashboardContent() {
           <div className="flex items-center gap-3">
             <span className="terminal text-[11px] text-muted-foreground flex items-center gap-1.5">
               <span className={`h-1.5 w-1.5 rounded-full ${isFetching ? "bg-purple animate-pulse-glow" : "bg-mint"}`} />
-              Last updated · {lastUpdated.toLocaleTimeString("ko-KR", { hour12: false })}
+              Last updated · {lastUpdated ? lastUpdated.toLocaleTimeString("ko-KR", { hour12: false }) : "—"}
             </span>
             <Button
               size="sm"

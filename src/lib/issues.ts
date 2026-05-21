@@ -1,10 +1,45 @@
-import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
+import { createClient } from "@supabase/supabase-js";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SAMPLE_ISSUES, useTestMode } from "@/lib/test-mode";
 
-export type Issue = Tables<"issues">;
+const PRIVACY_RADAR_SUPABASE_URL = "https://cqmbcufxuznpdvsdhwge.supabase.co";
+const PRIVACY_RADAR_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_eY3zYRAQdj3zdGuKry0IKA_yafqeDaW";
+
+const privacyRadarSupabase = createClient(
+  PRIVACY_RADAR_SUPABASE_URL,
+  PRIVACY_RADAR_SUPABASE_PUBLISHABLE_KEY,
+  { auth: { persistSession: false, autoRefreshToken: false } },
+);
+
+type RawIssue = {
+  id: string | number;
+  title: string;
+  summary: string | null;
+  source: string | null;
+  source_url?: string | null;
+  url?: string | null;
+  category: string | null;
+  novelty_score: number | null;
+  relevance_score: number | null;
+  capability_tags: string[] | null;
+  privacy_implications: string | string[] | null;
+  created_at: string;
+};
+
+export type Issue = {
+  id: string;
+  title: string;
+  summary: string | null;
+  source: string | null;
+  source_url: string | null;
+  category: string | null;
+  novelty_score: number | null;
+  relevance_score: number | null;
+  capability_tags: string[] | null;
+  privacy_implications: string | string[] | null;
+  created_at: string;
+};
 
 export const REFRESH_INTERVAL_MS = 60_000;
 export const NEW_ISSUE_EVENT = "privacy-radar:new-issues";
@@ -13,12 +48,12 @@ export const issuesQueryOptions = () =>
   queryOptions({
     queryKey: ["issues"],
     queryFn: async (): Promise<Issue[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await privacyRadarSupabase
         .from("issues")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data ?? [];
+      return ((data ?? []) as RawIssue[]).map(normalizeIssue);
     },
   });
 
@@ -26,15 +61,31 @@ export const issueQueryOptions = (id: string) =>
   queryOptions({
     queryKey: ["issues", id],
     queryFn: async (): Promise<Issue | null> => {
-      const { data, error } = await supabase
+      const { data, error } = await privacyRadarSupabase
         .from("issues")
         .select("*")
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return data ? normalizeIssue(data as RawIssue) : null;
     },
   });
+
+function normalizeIssue(issue: RawIssue): Issue {
+  return {
+    id: String(issue.id),
+    title: issue.title,
+    summary: issue.summary,
+    source: issue.source,
+    source_url: issue.source_url ?? issue.url ?? null,
+    category: issue.category,
+    novelty_score: issue.novelty_score,
+    relevance_score: issue.relevance_score,
+    capability_tags: issue.capability_tags,
+    privacy_implications: issue.privacy_implications,
+    created_at: issue.created_at,
+  };
+}
 
 /**
  * Live wrapper around `issuesQueryOptions` that auto-refetches every 60s,
@@ -61,7 +112,7 @@ export function useLiveIssues() {
 
   const seenRef = useRef<Set<string> | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
-  const [lastUpdated, setLastUpdated] = useState<Date>(() => new Date());
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!issues) return;
