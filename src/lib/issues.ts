@@ -49,9 +49,7 @@ export function useLiveIssues() {
     refetchIntervalInBackground: false,
   });
 
-  // Lazy import to avoid circular deps at module init.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { useTestMode, SAMPLE_ISSUES } = require("@/lib/test-mode") as typeof import("@/lib/test-mode");
+  // Inject sample data only when test mode is on.
   const testMode = useTestMode();
 
   const issues = useMemo<Issue[]>(() => {
