@@ -45,7 +45,7 @@ function IssuesList() {
       <div className="flex items-center justify-between gap-3 flex-wrap glass rounded-xl px-4 py-2.5">
         <span className="terminal text-[11px] text-muted-foreground flex items-center gap-1.5">
           <span className={`h-1.5 w-1.5 rounded-full ${isFetching ? "bg-purple animate-pulse-glow" : "bg-mint"}`} />
-          Last updated · {lastUpdated.toLocaleTimeString("ko-KR", { hour12: false })} · 60초마다 자동 새로고침
+          Last updated · {lastUpdated ? lastUpdated.toLocaleTimeString("ko-KR", { hour12: false }) : "—"} · 60초마다 자동 새로고침
         </span>
         <Button
           size="sm"
