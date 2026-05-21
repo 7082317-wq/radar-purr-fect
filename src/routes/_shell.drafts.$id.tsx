@@ -52,6 +52,11 @@ function downloadDocx(title: string, sections: { h: string; body: string }[]) {
   URL.revokeObjectURL(url);
 }
 
+function formatIssueText(value: string | string[] | null | undefined, fallback = "") {
+  if (Array.isArray(value)) return value.join("\n");
+  return value ?? fallback;
+}
+
 function DraftReport() {
   return (
     <Suspense fallback={<div className="glass rounded-2xl p-6 text-sm text-muted-foreground">불러오는 중…</div>}>
@@ -83,12 +88,14 @@ function DraftBody({ issue }: { issue: Issue }) {
       h: "1. 개요 (Overview)",
       body: `최근 ${issue.source ?? "외부 소스"}를 통해 보고된 사안에 대한 내부 검토용 초안. 신규성 ${issue.novelty_score ?? "—"}/100 · 관련성 ${issue.relevance_score ?? "—"}/100.`,
     },
-    { h: "2. 핵심 이슈 (Key Issue)", body: issue.summary ?? "요약 정보가 제공되지 않았습니다." },
+    { h: "2. 핵심 이슈 (Key Issue)", body: formatIssueText(issue.summary, "요약 정보가 제공되지 않았습니다.") },
     {
       h: "3. 프라이버시 리스크 분석",
       body:
-        issue.privacy_implications ??
-        "• 수집 단계: 동의 메커니즘의 명확성 부족 가능성.\n• 처리 단계: 목적 외 이용 및 추론 위험.\n• 제공 단계: 제3자 공유 및 국외 이전 시 적정성 확보 필요.\n• 보존·파기: 학습 데이터의 삭제권 행사 가능성 검토 필요.",
+        formatIssueText(
+          issue.privacy_implications,
+          "• 수집 단계: 동의 메커니즘의 명확성 부족 가능성.\n• 처리 단계: 목적 외 이용 및 추론 위험.\n• 제공 단계: 제3자 공유 및 국외 이전 시 적정성 확보 필요.\n• 보존·파기: 학습 데이터의 삭제권 행사 가능성 검토 필요.",
+        ),
     },
     {
       h: "4. 국내 규제 시사점",
