@@ -48,20 +48,31 @@ export function useLiveIssues() {
     refetchIntervalInBackground: false,
   });
 
+  // Lazy import to avoid circular deps at module init.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { useTestMode, SAMPLE_ISSUES } = require("@/lib/test-mode") as typeof import("@/lib/test-mode");
+  const testMode = useTestMode();
+
+  const issues = useMemo<Issue[]>(() => {
+    if (!testMode) return query.data;
+    return [...query.data, ...SAMPLE_ISSUES].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }, [query.data, testMode, SAMPLE_ISSUES]);
+
   const seenRef = useRef<Set<string> | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
   const [lastUpdated, setLastUpdated] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    const data = query.data;
-    if (!data) return;
+    if (!issues) return;
     setLastUpdated(new Date());
-    const ids = new Set(data.map((i) => i.id));
+    const ids = new Set(issues.map((i) => i.id));
     if (seenRef.current === null) {
       seenRef.current = ids;
       return;
     }
-    const fresh = data.filter((i) => !seenRef.current!.has(i.id));
+    const fresh = issues.filter((i) => !seenRef.current!.has(i.id));
     if (fresh.length > 0) {
       const freshSet = new Set(fresh.map((i) => i.id));
       setNewIds(freshSet);
@@ -75,13 +86,14 @@ export function useLiveIssues() {
       return () => clearTimeout(t);
     }
     seenRef.current = ids;
-  }, [query.data]);
+  }, [issues]);
 
   return {
-    issues: query.data,
+    issues,
     newIds,
     lastUpdated,
     isFetching: query.isFetching,
     refetch: query.refetch,
+    testMode,
   };
 }
