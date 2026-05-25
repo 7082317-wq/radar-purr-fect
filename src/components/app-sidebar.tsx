@@ -1,21 +1,25 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  AlertTriangle,
+  ShieldAlert,
   Globe2,
   Cpu,
   Scale,
   FileText,
   Settings,
   Radar,
+  Bot,
+  AlertTriangle,
 } from "lucide-react";
 
 const items = [
   { to: "/", label: "대시보드", icon: LayoutDashboard },
-  { to: "/risks", label: "신규 위험", icon: AlertTriangle },
+  { to: "/ai-products", label: "해외 제품/서비스", icon: Cpu },
   { to: "/foreign-dpa", label: "해외 DPA", icon: Globe2 },
-  { to: "/ai-products", label: "AI 제품·정책", icon: Cpu },
-  { to: "/cases", label: "판례·결정", icon: Scale },
+  { to: "/cases", label: "판례 및 규제", icon: Scale },
+  { to: "/ai-agent", label: "AI Agent", icon: Bot },
+  { to: "/security", label: "보안 및 위험", icon: ShieldAlert },
+  { to: "/risks", label: "전체 신규", icon: AlertTriangle },
   { to: "/drafts", label: "생성된 초안", icon: FileText },
   { to: "/settings", label: "설정", icon: Settings },
 ] as const;
