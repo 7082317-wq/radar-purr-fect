@@ -8,9 +8,9 @@ export const Route = createFileRoute("/_shell/ai-products")({
   },
   component: () => (
     <CategoryPage
-      title="해외 제품 · 서비스"
+      title="해외 AI 제품/서비스"
       description="주요 AI 기업의 제품 출시, 모델 업데이트, 정책 발표를 추적합니다."
-      category="AI Product"
+      category="products"
     />
   ),
   errorComponent: CategoryErrorComponent,
