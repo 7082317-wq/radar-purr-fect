@@ -13,11 +13,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ShellRouteImport } from './routes/_shell'
 import { Route as ShellIndexRouteImport } from './routes/_shell.index'
 import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
+import { Route as ShellSecurityRouteImport } from './routes/_shell.security'
 import { Route as ShellRisksRouteImport } from './routes/_shell.risks'
 import { Route as ShellForeignDpaRouteImport } from './routes/_shell.foreign-dpa'
 import { Route as ShellDraftsRouteImport } from './routes/_shell.drafts'
 import { Route as ShellCasesRouteImport } from './routes/_shell.cases'
 import { Route as ShellAiProductsRouteImport } from './routes/_shell.ai-products'
+import { Route as ShellAiAgentRouteImport } from './routes/_shell.ai-agent'
 import { Route as ShellDraftsIdRouteImport } from './routes/_shell.drafts.$id'
 
 const LoginRoute = LoginRouteImport.update({
@@ -37,6 +39,11 @@ const ShellIndexRoute = ShellIndexRouteImport.update({
 const ShellSettingsRoute = ShellSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellSecurityRoute = ShellSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => ShellRoute,
 } as any)
 const ShellRisksRoute = ShellRisksRouteImport.update({
@@ -64,6 +71,11 @@ const ShellAiProductsRoute = ShellAiProductsRouteImport.update({
   path: '/ai-products',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellAiAgentRoute = ShellAiAgentRouteImport.update({
+  id: '/ai-agent',
+  path: '/ai-agent',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellDraftsIdRoute = ShellDraftsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -73,21 +85,25 @@ const ShellDraftsIdRoute = ShellDraftsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ShellIndexRoute
   '/login': typeof LoginRoute
+  '/ai-agent': typeof ShellAiAgentRoute
   '/ai-products': typeof ShellAiProductsRoute
   '/cases': typeof ShellCasesRoute
   '/drafts': typeof ShellDraftsRouteWithChildren
   '/foreign-dpa': typeof ShellForeignDpaRoute
   '/risks': typeof ShellRisksRoute
+  '/security': typeof ShellSecurityRoute
   '/settings': typeof ShellSettingsRoute
   '/drafts/$id': typeof ShellDraftsIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/ai-agent': typeof ShellAiAgentRoute
   '/ai-products': typeof ShellAiProductsRoute
   '/cases': typeof ShellCasesRoute
   '/drafts': typeof ShellDraftsRouteWithChildren
   '/foreign-dpa': typeof ShellForeignDpaRoute
   '/risks': typeof ShellRisksRoute
+  '/security': typeof ShellSecurityRoute
   '/settings': typeof ShellSettingsRoute
   '/': typeof ShellIndexRoute
   '/drafts/$id': typeof ShellDraftsIdRoute
@@ -96,11 +112,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_shell': typeof ShellRouteWithChildren
   '/login': typeof LoginRoute
+  '/_shell/ai-agent': typeof ShellAiAgentRoute
   '/_shell/ai-products': typeof ShellAiProductsRoute
   '/_shell/cases': typeof ShellCasesRoute
   '/_shell/drafts': typeof ShellDraftsRouteWithChildren
   '/_shell/foreign-dpa': typeof ShellForeignDpaRoute
   '/_shell/risks': typeof ShellRisksRoute
+  '/_shell/security': typeof ShellSecurityRoute
   '/_shell/settings': typeof ShellSettingsRoute
   '/_shell/': typeof ShellIndexRoute
   '/_shell/drafts/$id': typeof ShellDraftsIdRoute
@@ -110,21 +128,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/ai-agent'
     | '/ai-products'
     | '/cases'
     | '/drafts'
     | '/foreign-dpa'
     | '/risks'
+    | '/security'
     | '/settings'
     | '/drafts/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/ai-agent'
     | '/ai-products'
     | '/cases'
     | '/drafts'
     | '/foreign-dpa'
     | '/risks'
+    | '/security'
     | '/settings'
     | '/'
     | '/drafts/$id'
@@ -132,11 +154,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_shell'
     | '/login'
+    | '/_shell/ai-agent'
     | '/_shell/ai-products'
     | '/_shell/cases'
     | '/_shell/drafts'
     | '/_shell/foreign-dpa'
     | '/_shell/risks'
+    | '/_shell/security'
     | '/_shell/settings'
     | '/_shell/'
     | '/_shell/drafts/$id'
@@ -177,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellSettingsRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/security': {
+      id: '/_shell/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof ShellSecurityRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/risks': {
       id: '/_shell/risks'
       path: '/risks'
@@ -212,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellAiProductsRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/ai-agent': {
+      id: '/_shell/ai-agent'
+      path: '/ai-agent'
+      fullPath: '/ai-agent'
+      preLoaderRoute: typeof ShellAiAgentRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/drafts/$id': {
       id: '/_shell/drafts/$id'
       path: '/$id'
@@ -235,21 +273,25 @@ const ShellDraftsRouteWithChildren = ShellDraftsRoute._addFileChildren(
 )
 
 interface ShellRouteChildren {
+  ShellAiAgentRoute: typeof ShellAiAgentRoute
   ShellAiProductsRoute: typeof ShellAiProductsRoute
   ShellCasesRoute: typeof ShellCasesRoute
   ShellDraftsRoute: typeof ShellDraftsRouteWithChildren
   ShellForeignDpaRoute: typeof ShellForeignDpaRoute
   ShellRisksRoute: typeof ShellRisksRoute
+  ShellSecurityRoute: typeof ShellSecurityRoute
   ShellSettingsRoute: typeof ShellSettingsRoute
   ShellIndexRoute: typeof ShellIndexRoute
 }
 
 const ShellRouteChildren: ShellRouteChildren = {
+  ShellAiAgentRoute: ShellAiAgentRoute,
   ShellAiProductsRoute: ShellAiProductsRoute,
   ShellCasesRoute: ShellCasesRoute,
   ShellDraftsRoute: ShellDraftsRouteWithChildren,
   ShellForeignDpaRoute: ShellForeignDpaRoute,
   ShellRisksRoute: ShellRisksRoute,
+  ShellSecurityRoute: ShellSecurityRoute,
   ShellSettingsRoute: ShellSettingsRoute,
   ShellIndexRoute: ShellIndexRoute,
 }
