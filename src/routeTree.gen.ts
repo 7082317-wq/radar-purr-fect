@@ -13,8 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ShellRouteImport } from './routes/_shell'
 import { Route as ShellIndexRouteImport } from './routes/_shell.index'
 import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
-import { Route as ShellSecurityRouteImport } from './routes/_shell.security'
 import { Route as ShellRisksRouteImport } from './routes/_shell.risks'
+import { Route as ShellGovernanceRouteImport } from './routes/_shell.governance'
 import { Route as ShellForeignDpaRouteImport } from './routes/_shell.foreign-dpa'
 import { Route as ShellDraftsRouteImport } from './routes/_shell.drafts'
 import { Route as ShellCasesRouteImport } from './routes/_shell.cases'
@@ -41,14 +41,14 @@ const ShellSettingsRoute = ShellSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => ShellRoute,
 } as any)
-const ShellSecurityRoute = ShellSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => ShellRoute,
-} as any)
 const ShellRisksRoute = ShellRisksRouteImport.update({
   id: '/risks',
   path: '/risks',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellGovernanceRoute = ShellGovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
   getParentRoute: () => ShellRoute,
 } as any)
 const ShellForeignDpaRoute = ShellForeignDpaRouteImport.update({
@@ -90,8 +90,8 @@ export interface FileRoutesByFullPath {
   '/cases': typeof ShellCasesRoute
   '/drafts': typeof ShellDraftsRouteWithChildren
   '/foreign-dpa': typeof ShellForeignDpaRoute
+  '/governance': typeof ShellGovernanceRoute
   '/risks': typeof ShellRisksRoute
-  '/security': typeof ShellSecurityRoute
   '/settings': typeof ShellSettingsRoute
   '/drafts/$id': typeof ShellDraftsIdRoute
 }
@@ -102,8 +102,8 @@ export interface FileRoutesByTo {
   '/cases': typeof ShellCasesRoute
   '/drafts': typeof ShellDraftsRouteWithChildren
   '/foreign-dpa': typeof ShellForeignDpaRoute
+  '/governance': typeof ShellGovernanceRoute
   '/risks': typeof ShellRisksRoute
-  '/security': typeof ShellSecurityRoute
   '/settings': typeof ShellSettingsRoute
   '/': typeof ShellIndexRoute
   '/drafts/$id': typeof ShellDraftsIdRoute
@@ -117,8 +117,8 @@ export interface FileRoutesById {
   '/_shell/cases': typeof ShellCasesRoute
   '/_shell/drafts': typeof ShellDraftsRouteWithChildren
   '/_shell/foreign-dpa': typeof ShellForeignDpaRoute
+  '/_shell/governance': typeof ShellGovernanceRoute
   '/_shell/risks': typeof ShellRisksRoute
-  '/_shell/security': typeof ShellSecurityRoute
   '/_shell/settings': typeof ShellSettingsRoute
   '/_shell/': typeof ShellIndexRoute
   '/_shell/drafts/$id': typeof ShellDraftsIdRoute
@@ -133,8 +133,8 @@ export interface FileRouteTypes {
     | '/cases'
     | '/drafts'
     | '/foreign-dpa'
+    | '/governance'
     | '/risks'
-    | '/security'
     | '/settings'
     | '/drafts/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -145,8 +145,8 @@ export interface FileRouteTypes {
     | '/cases'
     | '/drafts'
     | '/foreign-dpa'
+    | '/governance'
     | '/risks'
-    | '/security'
     | '/settings'
     | '/'
     | '/drafts/$id'
@@ -159,8 +159,8 @@ export interface FileRouteTypes {
     | '/_shell/cases'
     | '/_shell/drafts'
     | '/_shell/foreign-dpa'
+    | '/_shell/governance'
     | '/_shell/risks'
-    | '/_shell/security'
     | '/_shell/settings'
     | '/_shell/'
     | '/_shell/drafts/$id'
@@ -201,18 +201,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellSettingsRouteImport
       parentRoute: typeof ShellRoute
     }
-    '/_shell/security': {
-      id: '/_shell/security'
-      path: '/security'
-      fullPath: '/security'
-      preLoaderRoute: typeof ShellSecurityRouteImport
-      parentRoute: typeof ShellRoute
-    }
     '/_shell/risks': {
       id: '/_shell/risks'
       path: '/risks'
       fullPath: '/risks'
       preLoaderRoute: typeof ShellRisksRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/governance': {
+      id: '/_shell/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof ShellGovernanceRouteImport
       parentRoute: typeof ShellRoute
     }
     '/_shell/foreign-dpa': {
@@ -278,8 +278,8 @@ interface ShellRouteChildren {
   ShellCasesRoute: typeof ShellCasesRoute
   ShellDraftsRoute: typeof ShellDraftsRouteWithChildren
   ShellForeignDpaRoute: typeof ShellForeignDpaRoute
+  ShellGovernanceRoute: typeof ShellGovernanceRoute
   ShellRisksRoute: typeof ShellRisksRoute
-  ShellSecurityRoute: typeof ShellSecurityRoute
   ShellSettingsRoute: typeof ShellSettingsRoute
   ShellIndexRoute: typeof ShellIndexRoute
 }
@@ -290,8 +290,8 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellCasesRoute: ShellCasesRoute,
   ShellDraftsRoute: ShellDraftsRouteWithChildren,
   ShellForeignDpaRoute: ShellForeignDpaRoute,
+  ShellGovernanceRoute: ShellGovernanceRoute,
   ShellRisksRoute: ShellRisksRoute,
-  ShellSecurityRoute: ShellSecurityRoute,
   ShellSettingsRoute: ShellSettingsRoute,
   ShellIndexRoute: ShellIndexRoute,
 }
@@ -305,3 +305,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

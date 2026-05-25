@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { issuesQueryOptions } from "@/lib/issues";
 import { CategoryPage, CategoryErrorComponent } from "@/components/category-issues";
 
-export const Route = createFileRoute("/_shell/security")({
+export const Route = createFileRoute("/_shell/governance")({
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(issuesQueryOptions());
   },
   component: () => (
     <CategoryPage
-      title="보안 및 위험"
-      description="AI 보안 취약점, 모델 악용, 데이터 유출 및 위협 인텔리전스."
-      category="Security / Risk"
+      title="AI Governance / Standards"
+      description="AI 거버넌스 프레임워크, 국제 표준, 정책 가이드라인 동향."
+      category="governance"
     />
   ),
   errorComponent: CategoryErrorComponent,

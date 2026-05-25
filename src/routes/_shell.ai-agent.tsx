@@ -8,9 +8,9 @@ export const Route = createFileRoute("/_shell/ai-agent")({
   },
   component: () => (
     <CategoryPage
-      title="AI Agent"
-      description="자율 AI 에이전트의 능력 변화, 도구 사용, 프라이버시 영향 신호."
-      category="AI Agent"
+      title="Emerging AI / AI Agent"
+      description="새롭게 부상하는 AI 능력과 자율 에이전트의 프라이버시 영향 신호."
+      category="emerging"
     />
   ),
   errorComponent: CategoryErrorComponent,

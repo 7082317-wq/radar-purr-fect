@@ -9,8 +9,8 @@ export const Route = createFileRoute("/_shell/foreign-dpa")({
   component: () => (
     <CategoryPage
       title="해외 DPA"
-      description="ICO · EDPB · OPC · PDPC · CNIL · FTC 등 주요 감독기관 가이던스 및 거버넌스 동향."
-      category="DPA / Governance"
+      description="ICO · EDPB · OPC · PDPC · CNIL · FTC 등 주요 감독기관 가이던스 동향."
+      category="dpa"
     />
   ),
   errorComponent: CategoryErrorComponent,
