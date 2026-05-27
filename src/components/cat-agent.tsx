@@ -73,7 +73,7 @@ export function CatAgent() {
         >
           <div className="font-medium text-foreground">{b.text}</div>
           <div className="mt-1 terminal text-mint/80">
-            cat-agent · {override ? "alert · live" : "v0.4.2"}
+            lockstar-agent · {override ? "alert · live" : "v0.4.2"}
           </div>
           <span className="absolute -right-2 bottom-4 h-3 w-3 rotate-45 bg-card/60 border-r border-b border-glass-border backdrop-blur-xl" />
           <button
