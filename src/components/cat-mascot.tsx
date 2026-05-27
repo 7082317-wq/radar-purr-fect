@@ -26,20 +26,20 @@ export function CatMascot({ state = "idle", size = 96 }: Props) {
           <span
             className="absolute rounded-full bg-[oklch(0.7_0.21_25)] animate-pulse-glow"
             style={{
-              width: size * 0.07,
-              height: size * 0.07,
-              left: size * 0.36,
-              top: size * 0.38,
+              width: size * 0.06,
+              height: size * 0.06,
+              left: size * 0.355,
+              top: size * 0.42,
               boxShadow: `0 0 ${size * 0.08}px oklch(0.7 0.21 25)`,
             }}
           />
           <span
             className="absolute rounded-full bg-[oklch(0.7_0.21_25)] animate-pulse-glow"
             style={{
-              width: size * 0.07,
-              height: size * 0.07,
-              left: size * 0.55,
-              top: size * 0.38,
+              width: size * 0.06,
+              height: size * 0.06,
+              left: size * 0.545,
+              top: size * 0.42,
               boxShadow: `0 0 ${size * 0.08}px oklch(0.7 0.21 25)`,
             }}
           />
