@@ -191,7 +191,7 @@ function DraftBody({ issue }: { issue: Issue }) {
         )}
       </header>
 
-      <AiReportPanel issueId={issue.id} />
+      <AiReportPanel issue={issue} />
 
       <div className="glass rounded-3xl p-8 space-y-7 leading-relaxed">
         {sections.map((s) => (
