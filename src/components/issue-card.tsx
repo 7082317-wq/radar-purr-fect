@@ -30,6 +30,8 @@ function formatText(value: string | string[] | null | undefined) {
 }
 
 export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: boolean }) {
+  const [open, setOpen] = useState(false);
+
   const openSource = () => {
     if (issue.source_url) window.open(issue.source_url, "_blank", "noopener,noreferrer");
   };
