@@ -1,8 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Issue } from "@/lib/issues";
 import { FileText, ExternalLink, ShieldAlert } from "lucide-react";
+import { BriefingDialog } from "@/components/briefing-dialog";
 
 function scoreColor(s: number | null | undefined) {
   const v = s ?? 0;
