@@ -191,7 +191,7 @@ function DraftBody({ issue }: { issue: Issue }) {
         )}
       </header>
 
-      <AiReportPanel issueId={issue.id} />
+      <AiReportPanel issue={issue} />
 
       <div className="glass rounded-3xl p-8 space-y-7 leading-relaxed">
         {sections.map((s) => (
@@ -208,7 +208,7 @@ function DraftBody({ issue }: { issue: Issue }) {
   );
 }
 
-function AiReportPanel({ issueId }: { issueId: string }) {
+function AiReportPanel({ issue }: { issue: Issue }) {
   const generate = useServerFn(generateReport);
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<string | null>(null);
@@ -218,7 +218,20 @@ function AiReportPanel({ issueId }: { issueId: string }) {
     setLoading(true);
     setReport(null);
     try {
-      const res = await generate({ data: { issueId } });
+      const res = await generate({
+        data: {
+          issue: {
+            id: issue.id,
+            title: issue.title,
+            summary: issue.summary,
+            source: issue.source,
+            source_url: issue.source_url,
+            category: issue.category,
+            capability_tags: issue.capability_tags,
+            privacy_implications: issue.privacy_implications,
+          },
+        },
+      });
       setReport(res.report);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "보고서 생성에 실패했습니다.");

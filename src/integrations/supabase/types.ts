@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      drafts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          issue_id: string
+          issue_summary: string | null
+          issue_title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          issue_id: string
+          issue_summary?: string | null
+          issue_title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          issue_id?: string
+          issue_summary?: string | null
+          issue_title?: string
+        }
+        Relationships: []
+      }
       issues: {
         Row: {
           capability_tags: string[] | null
