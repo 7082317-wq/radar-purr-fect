@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { issueQueryOptions, type Issue } from "@/lib/issues";
+import { generateReport } from "@/lib/report.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, ExternalLink, FileText, Printer } from "lucide-react";
+import { toast } from "sonner";
+import { ArrowLeft, Check, Copy, Download, ExternalLink, FileText, Loader2, Printer, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_shell/drafts/$id")({
   loader: ({ context, params }) => {
@@ -188,6 +191,8 @@ function DraftBody({ issue }: { issue: Issue }) {
         )}
       </header>
 
+      <AiReportPanel issueId={issue.id} />
+
       <div className="glass rounded-3xl p-8 space-y-7 leading-relaxed">
         {sections.map((s) => (
           <section key={s.h}>
@@ -200,5 +205,75 @@ function DraftBody({ issue }: { issue: Issue }) {
         </footer>
       </div>
     </article>
+  );
+}
+
+function AiReportPanel({ issueId }: { issueId: string }) {
+  const generate = useServerFn(generateReport);
+  const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const onGenerate = async () => {
+    setLoading(true);
+    setReport(null);
+    try {
+      const res = await generate({ data: { issueId } });
+      setReport(res.report);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "보고서 생성에 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onCopy = async () => {
+    if (!report) return;
+    try {
+      await navigator.clipboard.writeText(report);
+      setCopied(true);
+      toast.success("보고서를 복사했습니다.");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("복사에 실패했습니다.");
+    }
+  };
+
+  return (
+    <div className="glass-strong rounded-3xl p-6 print:hidden">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div className="terminal text-xs text-mint flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" /> AI 보고서 초안 생성
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Gemini 기반으로 중앙행정기관 정책보고서 양식의 초안을 생성합니다.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {report && (
+            <Button size="sm" variant="outline" onClick={onCopy} className="gap-1.5">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "복사됨" : "복사"}
+            </Button>
+          )}
+          <Button
+            size="sm"
+            onClick={onGenerate}
+            disabled={loading}
+            className="bg-mint text-mint-foreground hover:bg-mint/90 gap-1.5"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            {loading ? "생성 중..." : report ? "다시 생성" : "보고서 초안 생성"}
+          </Button>
+        </div>
+      </div>
+
+      {report && (
+        <pre className="mt-5 rounded-2xl bg-background/40 border border-glass-border p-5 text-sm whitespace-pre-wrap font-sans leading-relaxed text-foreground/90 max-h-[600px] overflow-auto">
+          {report}
+        </pre>
+      )}
+    </div>
   );
 }
