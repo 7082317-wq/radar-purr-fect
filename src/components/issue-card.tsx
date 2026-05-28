@@ -121,10 +121,13 @@ export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: bool
       </div>
 
       <div className="flex gap-2 pt-1">
-        <Button asChild size="sm" variant="secondary" className="flex-1 gap-1.5">
-          <Link to="/drafts/$id" params={{ id: issue.id }}>
-            <FileText className="h-3.5 w-3.5" /> Generate Briefing
-          </Link>
+        <Button
+          size="sm"
+          variant="secondary"
+          className="flex-1 gap-1.5"
+          onClick={() => setOpen(true)}
+        >
+          <FileText className="h-3.5 w-3.5" /> Generate Briefing
         </Button>
         <Button
           size="sm"
@@ -136,6 +139,7 @@ export function IssueCard({ issue, isNew = false }: { issue: Issue; isNew?: bool
           <ExternalLink className="h-3.5 w-3.5" /> Open Source
         </Button>
       </div>
+      <BriefingDialog issue={issue} open={open} onOpenChange={setOpen} />
     </div>
   );
 }
